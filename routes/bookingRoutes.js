@@ -4,7 +4,8 @@ import {
     createBooking,
     getUserBookings as getMyBookings,
     getBooking,
-    cancelBooking
+    cancelBooking,
+    handleStripeWebhook
 } from '../controllers/bookingController.js';
 
 const router = express.Router();
@@ -154,5 +155,8 @@ router.get('/:id', protect, getBooking);
  *         description: Booking not found
  */
 router.put('/:id/cancel', protect, cancelBooking);
+
+// Stripe webhook route - no auth needed
+router.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
 export default router; 
