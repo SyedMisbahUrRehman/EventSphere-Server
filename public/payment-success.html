@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .success-icon {
+            color: #4CAF50;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background: #5469d4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="success-icon">✓</div>
+    <h1>Payment Successful!</h1>
+    <p class="message">Your payment has been processed successfully.</p>
+    <a href="/test-payment.html" class="button">Make Another Payment</a>
+
+    <script>
+        // You can add additional success handling here
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentIntent = urlParams.get('payment_intent');
+        const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+
+        if (paymentIntent && paymentIntentClientSecret) {
+            console.log('Payment completed:', {
+                paymentIntent,
+                paymentIntentClientSecret
+            });
+        }
+    </script>
+</body>
+
+</html>
