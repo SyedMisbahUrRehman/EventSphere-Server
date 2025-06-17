@@ -10,12 +10,18 @@ export const createBooking = async (req, res) => {
         // Find the event
         const event = await Event.findById(eventId);
         if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found'
+            });
         }
 
         // Check if enough tickets are available
         if (event.availableTickets < numberOfTickets) {
-            return res.status(400).json({ message: 'Not enough tickets available' });
+            return res.status(400).json({
+                success: false,
+                message: 'Not enough tickets available'
+            });
         }
 
         // Calculate total amount
@@ -37,10 +43,17 @@ export const createBooking = async (req, res) => {
         await event.save();
 
         logger.success(`Booking created for event: ${event.title}`);
-        res.status(201).json(booking);
+        res.status(201).json({
+            success: true,
+            message: 'Booking created successfully',
+            data: booking
+        });
     } catch (error) {
         logger.error(`Error creating booking: ${error.message}`);
-        res.status(400).json({ message: error.message });
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -54,10 +67,17 @@ export const getUserBookings = async (req, res) => {
             })
             .sort({ createdAt: -1 });
 
-        res.json(bookings);
+        res.json({
+            success: true,
+            message: 'Bookings retrieved successfully',
+            data: bookings
+        });
     } catch (error) {
         logger.error(`Error fetching user bookings: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -71,18 +91,31 @@ export const getBooking = async (req, res) => {
             });
 
         if (!booking) {
-            return res.status(404).json({ message: 'Booking not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Booking not found'
+            });
         }
 
         // Check if user owns the booking
         if (booking.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'Not authorized to view this booking' });
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to view this booking'
+            });
         }
 
-        res.json(booking);
+        res.json({
+            success: true,
+            message: 'Booking retrieved successfully',
+            data: booking
+        });
     } catch (error) {
         logger.error(`Error fetching booking: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -92,17 +125,26 @@ export const cancelBooking = async (req, res) => {
         const booking = await Booking.findById(req.params.id);
 
         if (!booking) {
-            return res.status(404).json({ message: 'Booking not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Booking not found'
+            });
         }
 
         // Check if user owns the booking
         if (booking.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'Not authorized to cancel this booking' });
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to cancel this booking'
+            });
         }
 
         // Check if booking is already cancelled
         if (booking.status === 'cancelled') {
-            return res.status(400).json({ message: 'Booking is already cancelled' });
+            return res.status(400).json({
+                success: false,
+                message: 'Booking is already cancelled'
+            });
         }
 
         // Update booking status
@@ -115,9 +157,15 @@ export const cancelBooking = async (req, res) => {
         await event.save();
 
         logger.success(`Booking cancelled: ${booking._id}`);
-        res.json({ message: 'Booking cancelled successfully' });
+        res.json({
+            success: true,
+            message: 'Booking cancelled successfully'
+        });
     } catch (error) {
         logger.error(`Error cancelling booking: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }; 

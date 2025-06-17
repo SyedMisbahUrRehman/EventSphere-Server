@@ -10,10 +10,17 @@ export const createEvent = async (req, res) => {
         });
         await event.save();
         logger.success(`Event created: ${event.title}`);
-        res.status(201).json(event);
+        res.status(201).json({
+            success: true,
+            message: 'Event created successfully',
+            data: event
+        });
     } catch (error) {
         logger.error(`Error creating event: ${error.message}`);
-        res.status(400).json({ message: error.message });
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -40,14 +47,21 @@ export const getEvents = async (req, res) => {
         const total = await Event.countDocuments(query);
 
         res.json({
-            events,
-            currentPage: page,
-            totalPages: Math.ceil(total / limit),
-            totalEvents: total
+            success: true,
+            message: 'Events retrieved successfully',
+            data: {
+                events,
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalEvents: total
+            }
         });
     } catch (error) {
         logger.error(`Error fetching events: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -58,13 +72,23 @@ export const getEvent = async (req, res) => {
             .populate('organizer', 'name email');
 
         if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found'
+            });
         }
 
-        res.json(event);
+        res.json({
+            success: true,
+            message: 'Event retrieved successfully',
+            data: event
+        });
     } catch (error) {
         logger.error(`Error fetching event: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -74,12 +98,18 @@ export const updateEvent = async (req, res) => {
         const event = await Event.findById(req.params.id);
 
         if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found'
+            });
         }
 
         // Check if user is the organizer
         if (event.organizer.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'Not authorized to update this event' });
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this event'
+            });
         }
 
         const updatedEvent = await Event.findByIdAndUpdate(
@@ -89,10 +119,17 @@ export const updateEvent = async (req, res) => {
         );
 
         logger.success(`Event updated: ${updatedEvent.title}`);
-        res.json(updatedEvent);
+        res.json({
+            success: true,
+            message: 'Event updated successfully',
+            data: updatedEvent
+        });
     } catch (error) {
         logger.error(`Error updating event: ${error.message}`);
-        res.status(400).json({ message: error.message });
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
 };
 
@@ -102,19 +139,31 @@ export const deleteEvent = async (req, res) => {
         const event = await Event.findById(req.params.id);
 
         if (!event) {
-            return res.status(404).json({ message: 'Event not found' });
+            return res.status(404).json({
+                success: false,
+                message: 'Event not found'
+            });
         }
 
         // Check if user is the organizer
         if (event.organizer.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'Not authorized to delete this event' });
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to delete this event'
+            });
         }
 
         await Event.findByIdAndDelete(req.params.id);
         logger.success(`Event deleted: ${event.title}`);
-        res.json({ message: 'Event deleted successfully' });
+        res.json({
+            success: true,
+            message: 'Event deleted successfully'
+        });
     } catch (error) {
         logger.error(`Error deleting event: ${error.message}`);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 }; 
