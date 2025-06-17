@@ -10,6 +10,11 @@ import stripeRoutes from './routes/stripeRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 import { logger } from './utils/logger.js';
 import swaggerSetup from './swagger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 connectDB();
@@ -35,6 +40,9 @@ app.use((req, res, next) => {
 
 app.use(morgan('dev'));
 
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
@@ -54,6 +62,7 @@ if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
         console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
+        console.log(`Payment test page available at http://localhost:${PORT}/test-payment.html`);
     });
 }
 
