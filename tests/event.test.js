@@ -46,9 +46,9 @@ describe('Event Endpoints', () => {
                 .get('/api/events')
                 .expect(200);
 
-            expect(res.body.events).toBeInstanceOf(Array);
-            expect(res.body.events.length).toBeGreaterThan(0);
-            expect(res.body.events[0].title).toBe('Test Event');
+            expect(res.body.data.events).toBeInstanceOf(Array);
+            expect(res.body.data.events.length).toBeGreaterThan(0);
+            expect(res.body.data.events[0].title).toBe('Test Event');
         });
 
         it('should filter events by category', async () => {
@@ -56,8 +56,8 @@ describe('Event Endpoints', () => {
                 .get('/api/events?category=workshop')
                 .expect(200);
 
-            expect(res.body.events).toBeInstanceOf(Array);
-            expect(res.body.events[0].category).toBe('workshop');
+            expect(res.body.data.events).toBeInstanceOf(Array);
+            expect(res.body.data.events[0].category).toBe('workshop');
         });
     });
 
@@ -67,8 +67,8 @@ describe('Event Endpoints', () => {
                 .get(`/api/events/${testEvent._id}`)
                 .expect(200);
 
-            expect(res.body.title).toBe('Test Event');
-            expect(res.body.description).toBe('Test Description');
+            expect(res.body.data.title).toBe('Test Event');
+            expect(res.body.data.description).toBe('Test Description');
         });
 
         it('should return 404 for non-existent event', async () => {
@@ -97,8 +97,8 @@ describe('Event Endpoints', () => {
                 .send(newEvent)
                 .expect(201);
 
-            expect(res.body.title).toBe('New Event');
-            expect(res.body.organizer.toString()).toBe(testUser._id.toString());
+            expect(res.body.data.title).toBe('New Event');
+            expect(res.body.data.organizer.toString()).toBe(testUser._id.toString());
         });
 
         it('should not create event without auth token', async () => {
@@ -127,8 +127,8 @@ describe('Event Endpoints', () => {
                 .send(updates)
                 .expect(200);
 
-            expect(res.body.title).toBe('Updated Event');
-            expect(res.body.price).toBe(100);
+            expect(res.body.data.title).toBe('Updated Event');
+            expect(res.body.data.price).toBe(100);
         });
 
         it('should not update event without auth token', async () => {
