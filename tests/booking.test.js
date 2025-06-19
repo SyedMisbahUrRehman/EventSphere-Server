@@ -66,9 +66,9 @@ describe('Booking Endpoints', () => {
                 .send(bookingData)
                 .expect(201);
 
-            expect(res.body.numberOfTickets).toBe(3);
-            expect(res.body.totalAmount).toBe(150); // 3 tickets * $50
-            expect(res.body.status).toBe('active');
+            expect(res.body.data.numberOfTickets).toBe(3);
+            expect(res.body.data.totalAmount).toBe(150); // 3 tickets * $50
+            expect(res.body.data.status).toBe('active');
 
             // Verify event tickets are updated
             const updatedEvent = await Event.findById(testEvent._id);
@@ -108,9 +108,9 @@ describe('Booking Endpoints', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
-            expect(res.body).toBeInstanceOf(Array);
-            expect(res.body.length).toBeGreaterThan(0);
-            expect(res.body[0].numberOfTickets).toBe(2);
+            expect(res.body.data).toBeInstanceOf(Array);
+            expect(res.body.data.length).toBeGreaterThan(0);
+            expect(res.body.data[0].numberOfTickets).toBe(2);
         });
 
         it('should not get bookings without auth token', async () => {
@@ -127,8 +127,8 @@ describe('Booking Endpoints', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
-            expect(res.body.numberOfTickets).toBe(2);
-            expect(res.body.totalAmount).toBe(100);
+            expect(res.body.data.numberOfTickets).toBe(2);
+            expect(res.body.data.totalAmount).toBe(100);
         });
 
         it('should not get booking without auth token', async () => {
