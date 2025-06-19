@@ -2,7 +2,9 @@ import Booking from '../models/Booking.js';
 import Event from '../models/Event.js';
 import { logger } from '../utils/logger.js';
 import stripe from '../config/stripe.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 // Create a new booking
 export const createBooking = async (req, res) => {
     try {
