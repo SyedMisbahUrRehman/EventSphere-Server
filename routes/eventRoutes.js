@@ -22,37 +22,30 @@ const router = express.Router();
  *         schema:
  *           type: string
  *         description: Filter events by category
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [active, cancelled, completed]
+ *         description: Filter events by status
  *     responses:
  *       200:
  *         description: List of events
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   title:
- *                     type: string
- *                   description:
- *                     type: string
- *                   date:
- *                     type: string
- *                     format: date-time
- *                   category:
- *                     type: string
- *                   price:
- *                     type: number
- *                   availableTickets:
- *                     type: number
- *                   location:
- *                     type: string
- *                   organizer:
- *                     type: string
- *                   status:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Event'
+ *                 count:
+ *                   type: number
+ *                   description: Total number of events
  */
 router.get('/', getEvents);
 
@@ -77,29 +70,17 @@ router.get('/', getEvents);
  *             schema:
  *               type: object
  *               properties:
- *                 _id:
- *                   type: string
- *                 title:
- *                   type: string
- *                 description:
- *                   type: string
- *                 date:
- *                   type: string
- *                   format: date-time
- *                 category:
- *                   type: string
- *                 price:
- *                   type: number
- *                 availableTickets:
- *                   type: number
- *                 location:
- *                   type: string
- *                 organizer:
- *                   type: string
- *                 status:
- *                   type: string
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Event'
  *       404:
  *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id', getEvent);
 
@@ -128,26 +109,56 @@ router.get('/:id', getEvent);
  *             properties:
  *               title:
  *                 type: string
+ *                 description: Event title
  *               description:
  *                 type: string
+ *                 description: Event description
  *               date:
  *                 type: string
  *                 format: date-time
+ *                 description: Event date and time
  *               category:
  *                 type: string
+ *                 description: Event category
  *               price:
  *                 type: number
+ *                 minimum: 0
+ *                 description: Ticket price
  *               availableTickets:
  *                 type: number
+ *                 minimum: 1
+ *                 description: Number of available tickets
  *               location:
  *                 type: string
+ *                 description: Event location
  *     responses:
  *       201:
  *         description: Event created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event created successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Event'
  *       400:
  *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Not authorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post('/', protect, createEvent);
 
@@ -175,30 +186,66 @@ router.post('/', protect, createEvent);
  *             properties:
  *               title:
  *                 type: string
+ *                 description: Event title
  *               description:
  *                 type: string
+ *                 description: Event description
  *               date:
  *                 type: string
  *                 format: date-time
+ *                 description: Event date and time
  *               category:
  *                 type: string
+ *                 description: Event category
  *               price:
  *                 type: number
+ *                 minimum: 0
+ *                 description: Ticket price
  *               availableTickets:
  *                 type: number
+ *                 minimum: 0
+ *                 description: Number of available tickets
  *               location:
  *                 type: string
+ *                 description: Event location
  *               status:
  *                 type: string
+ *                 enum: [active, cancelled, completed]
+ *                 description: Event status
  *     responses:
  *       200:
  *         description: Event updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Event'
  *       400:
  *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
  *         description: Not authorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put('/:id', protect, updateEvent);
 
@@ -220,10 +267,29 @@ router.put('/:id', protect, updateEvent);
  *     responses:
  *       200:
  *         description: Event deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Event deleted successfully
  *       401:
  *         description: Not authorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Event not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.delete('/:id', protect, deleteEvent);
 

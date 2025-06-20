@@ -21,7 +21,7 @@ export const register = async (req, res, next) => {
       email,
       password: hashedPassword,
       agreedToTerms,
-      subscribeNewsletter: !!subscribeNewsletter
+      subscribeNewsletter
     });
     await newUser.save();
 
