@@ -4,17 +4,37 @@ import User from '../models/User.js';
 
 export const register = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { firstName, lastName, email, password, confirmPassword, agreedToTerms, subscribeNewsletter } = req.body;
+    if (!agreedToTerms) {
+      return res.status(400).json({ message: 'You must agree to the Terms of Service and Privacy Policy.' });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match.' });
+    }
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      agreedToTerms,
+      subscribeNewsletter: !!subscribeNewsletter
+    });
     await newUser.save();
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully'
+      message: 'User registered successfully',
+      user: {
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        agreedToTerms: newUser.agreedToTerms,
+        subscribeNewsletter: newUser.subscribeNewsletter
+      }
     });
   } catch (error) {
     next(error);
